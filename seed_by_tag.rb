@@ -64,7 +64,7 @@ end
 def seed_douga_by_tag(tag, tag_progress)
 	progress = tag_progress[tag]
 	page_index = progress["douga"] + 1
-	url = "http://ext.nicovideo.jp/api/search/tag/#{tag}?order=a&sort=f&page=#{page_index}"
+	url = "http://ext.nicovideo.jp/api/search/tag/#{tag}?order=d&sort=f&page=#{page_index}"
 	
 	agent = Mechanize.new
 	while true

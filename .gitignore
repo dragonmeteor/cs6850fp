@@ -1,3 +1,13 @@
 db/data*.sqlite3
 db/data.sqlite3-journal
 tag_progress.rb
+
+*.aux
+*.bbl
+*.log
+*.pdf
+*.synctex.gz
+*.thm
+*.blg
+*.gexf
+*.dot
