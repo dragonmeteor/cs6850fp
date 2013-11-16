@@ -1,5 +1,8 @@
 db/data*.sqlite3
 db/data.sqlite3-journal
+data/*/*
+data/*.json
+data/*.txt
 tag_progress.rb
 
 *.aux
