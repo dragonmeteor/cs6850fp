@@ -15,3 +15,4 @@ tag_progress.rb
 *.gexf
 *.dot
 *.png
+*.pyc

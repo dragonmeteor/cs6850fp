@@ -1,0 +1,190 @@
+\documentclass[10pt, a4paper]{article}
+
+\usepackage{fullpage}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{url}
+\usepackage{array}
+
+\newcommand{\etal}{{et~al.}}
+
+\title{Network Analysis of User-Generated Multimedia Contents:\\
+A Case Study of MikuMikuDance Contents in Niconico}
+\author{Derek Chou, Pramook Khungurn, Detian Shi, Chris Yu}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+To be written later.
+\end{abstract}
+
+\section{Introduction}
+
+We are interested in analyzing the network of videos and pictures in the Japanese content sharing site Niconico \cite{niconico}. 
+We focus on contents created using a free 3D animation software MikuMikuDance \cite{mmd} (abbreviated as MMD). 
+To date, there are at least 140,000 videos and 60,000 pictures uploaded to Niconico that are generated using or related to MMD. 
+
+These items from a graph structure among themselves as they form directed links among themselves in two ways. 
+First, the description of each item can contain links to other items just like web links. 
+Second, Niconico contains a sub-website called Content Tree \cite{content-tree} that allows an item’s creator to specify which other items are the “parents” of her item. 
+A link mostly points to the sources of materials used to create its origin and can be regarded as a citation, but links to other related items, such as the next item in a series, are also present. 
+
+As with many types of user generated content, each piece of content is a conglomeration of other previous works. In particular, a video can make use of existing 3D models, motions, and tools, and very rarely does a user post a completed MMD video that is composed of parts that are wholly original. Rather, users usually specialize in a certain element of production, and the majority of videos are pieced together. The user activities giving rise to these artefacts are an example of large-scale collaborative content creation similar to academic research, and analyzing the graph of one subset of items is akin to analyzing the citation graph of an academic discipline.
+
+\section{Previous Works}
+
+Hamasaki \etal~\cite{Hamasaki:2008} analyzed a similar data set obtained from the same website, but focused on videos related to voice synthesizer application Hatsune Miku (which MikuMikuDance is named after). 
+The application allows users to compose songs and have it performed digitally. 
+It drew the interest of many aspiring artists and soon, a large community grew for both creation and consumption of the genre. 
+The resulting videos thus not only include music and vocal tracks but also complex illustrations. 
+A video that finally goes viral usually makes use of earlier works made by many different unrelated users. 
+
+In their analysis of Hatsune Miku videos, Hamasaki \etal~used user-generated tags to classify the many different activities that goes into the final video into four categories: songwriting, song creation, illustration, and editing. They then went on to classify creators by the type of work they contribute and analyzed how a particular activity lead to activity of other creators. For example, they found that an action by a illustrator usually led to activity in other illustrators while activity by songwriters and song creators lead to activity in many different types of activities. We adopt this strategy in our analysis. 
+
+\cite{Cha:2009} \cite{Gruhl:2004} \cite{Leskovec:2006}
+
+\section{Data Collection and Processing}
+We used the Niconico's APIs as well as website crawling to obtain item data such uploader's user ID, description, upload time, view count, comment count, and tags. Items also have a ``Mylist'' count, which can be interpreted as the number of times the item has been ``favourited.'' 
+
+We limit the scope of our data collection to MMD-related items, defined as follows: we say that a tag is MMD-related if the tag contains ``MMD'' or ``MikuMikuDance'' as a substring, and we say that an item is MMD-related if it contains at least one MMD-related tag. 
+
+As stated earlier, directed edges between items are found in two ways. First, we can an item's description for IDs of Niconico videos and images, and, for each ID found, we then create an edge from the item to the item corresponding to the found ID. Second, we examine the item's Content Tree page and create an edge from the item to each of its parent item. For this project, we do not distinguish between these two types of links and only create \emph{one} directed edge if both description link and Content link are found.
+
+At the beginning of October, we started crawling Niconico website for MMD-related items by breadth-first searching from three seed items picked manually. After this first crawling, we added all items with tags related to MMD\footnote{We examined all the tags of the videos we found during the first crawl and filter out non-MMD-related tags. We then used the Niconico Search API to identify all items having any one of these tags and add them as seeds.} and performed breadth-first search again to obtain all reachable items. The crawling finished on November 12.
+
+As this project analyzes information propagation among items, we exclude all edges that are ``forward in time'' --- that is, pointing from an item to another item uploaded after it. The resulting graph after this cleanup contains 245,103 MMD-related items and 414,154 directed edges among them.
+
+Following \cite{Leskovec:2006}, we also infer the graph of creators who uploaded the items from the item graph. A directed edge in the creator graph is weighted by the number of links from videos of the source creator to the videos of the target creator. The creator graph contains 18,399 users and 176,324 edges.\footnote{In creating the graph, however, we did not take into account 80 items whose uploader cannot be identified due to being uploaded by a ``broadcasting channel'' rather than a regular website user. These items have 414 edges incident to them.}
+
+A creator uploaded $13.32$ items on average. However, the distribution of users who uploaded a specific number of items follows a power law as can be seen in Figure~\ref{user-vs-item-count}.
+\begin{figure}
+	\centering
+	\includegraphics[width=3in]{item_count_vs_user_plot.png}
+	\caption{Plot of number of items uploaded versus the number of creators that uploaded that number of items, in log-log scale. It can be seen that the distribution follows a power law.}
+	\label{user-vs-item-count}
+\end{figure}
+
+We also perfom other cleanups after activity classification in order to simplify further analysis of the graph. These are discussed in details in the next section.
+
+\section{Activity Categorization}
+
+Creating 3D computer graphics content is a complex process that requires many types of expertise including 3D modeling, motion authoring, and movie direction. As a result, a creator of MMD videos rarely has all the above expertise and has to rely on data such as 3D models and motions that are provided by others. Creators who provide usable data also make announcements of their data's being publicly available by creating MMD videos featuring the usage, and creators who use the data sometimes give credit to the former by ``citing'' the announcement videos either in her own video description or in the Content Tree. \medskip
+
+{\bf Activity categories.} As pointed out by Hamasaki \etal, classifying creators by what type of activity they engage in and then examining the number of edges between types of creators can reveal how creators depend on activities of one another. To gain similar insight in our case, we classify activity of MMD creators into 5 categories:
+\begin{itemize}
+	\item \emph{CG production}, where a creator uses MMD to create music videos, short animations, and images,
+	\item \emph{modeling}, where a user create 3D models of characters, static scenes, and props,
+	\item \emph{choreography}, where a user creates poses for 3D characters or key-framed motion data,
+	\item \emph{tool creation}, where a user creates software tools, visual effects, other types of data that can be used by the MMD software, or instructional videos, and
+	\item \emph{summarizing}, where a user create videos that summarize, introduce, or compare other MMD videos. This activity typically does not concern with the MMD software and involves only skills in video editing. 
+\end{itemize}
+
+{\bf Categorizing items.} To categorize creators, we first categorize the items. For each of the categories except CG production, we manually identified tags that contains keywords related to that class of activity. For example, a video that announces a new 3D model usually contains the tag ``Has MMD Model Distribution,'' and a tutorial video usually contains the tag ``MMD Lecture.'' We say that an item belongs to one of the four category if it contains a tag in the list of tags identified with that category. If an item does not belong to any of the four, we say that it is in the CG production category.
+
+By the above criteria, we have found that there are 225,916 CG production items, 13,377 modeling items, 2,582 choreography items, 2,306 tool items, and 1,365 summarizing items. While an item can belong to more than one category, we found only 435 such items with 11,653 edges incident to them. Statistics of items that belong to only a single category are given in Figure~\ref{item-statistics-by-category}. We can readily observe that, items in the modeling, choreography, and tool making categories receive many more in-links than those in the other two categories, reflecting the practice of creators citing sources of the data they use in their works.\medskip
+\begin{figure*}[t]
+	\centering
+	\begin{tabular}{c|c|c|c|c|c}
+		Category & Items & In-Links & In-Links per Item & Out-Links & Out-Links per Item \\
+		\hline
+		CG Production & 225,916 & 129,250 & 0.57 & 368,444 & 1.63\\
+		Modeling & 12,994 & 147,825 & 11.38 & 20,873 & 1.61\\
+		Choreography & 2,364 & 55,730 & 23.57 & 6,094 & 2.58\\
+		Tool Making & 2,052 & 68,714 & 33.49 & 4,060 & 1.98\\
+		Summarizing & 1,342 & 982 & 0.73 & 3,030 & 2.26
+	\end{tabular}
+	\caption{Statistics of items that belong to only one category. Links were counted ignoring those between items uploaded by the same creator.}
+	\label{item-statistics-by-category}
+\end{figure*}
+
+{\bf Categorizing creators.} We also classified each creator into one category based on the types of videos she contributed. To do so, for each creator and for each category, we count the number of items that belongs to the category that the creator contributes. As almost all creators contributed items in the CG production category, we say that a creator is a CG producer if they contribute no videos in other categories. For each of the remaining creators, we classify her into the one of the four remaining category that she contributes the most numbers of items to. Ties are broken arbitrarily in the following arbitrary order: tool making, then modeling, then choreography, and then summarizing.
+
+We found that there are 15,092 are CG producers ($82.03\%$), 1,962 modelers ($10.66\%$), 654 choreographers ($3.55\%$), 339 tool makers ($2.17\%$), and 292 summarizers ($1.59\%$). We surmise that this might be due to (1) low interest in summarizing videos, and (2) the fact that 3D modeling, choreography, and tool making requires more skills and efforts than just using MMD to create animations with previously created data. Other statistics for each category can be found in Figure~\ref{creator-statistics-by-category} and the number of links between different categories of creators can be found in Figure~\ref{user-links}.
+
+\begin{figure}[t]
+	\centering
+	\newcolumntype{A}{>{\centering\arraybackslash} m{1cm}}
+	\newcolumntype{B}{>{\centering\arraybackslash} m{1.5cm}}
+	\newcolumntype{C}{>{\centering\arraybackslash} m{2.5cm}}
+	\newcolumntype{D}{>{\centering\arraybackslash} m{1.25cm}}	
+	\begin{tabular}{C|D|D|B|D|B|D|B}
+		Category & Creators & Items & Items per Creator & In-Links & In-Links per Item & Out-Links & Out-Links per Item \\
+		\hline
+		CG Producers & 15,092 & 124,408 & 8.24 & 14,703 & 0.12 & 184,966 & 1.49\\
+		Modelers & 1,962 & 76,303 & 38.89 & 193,135 & 2.53 & 103,093 & 1.35\\
+		Choreographers & 654 & 26,157 & 40.00 & 71,136 & 2.72 & 45,196 & 1.73\\
+		Tool Makers & 399 & 13,823 & 34.64 & 79,090 & 5.72 & 19,712 & 1.43\\
+		Summarizers & 292 & 4,332 & 14.84 & 2,036 & 0.47 & 7,133 & 1.65
+	\end{tabular}
+	\caption{Creator statistics by categories. 53,647 self links were ignored when counting links.}
+	\label{creator-statistics-by-category}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\begin{tabular}{c|c|c|c|c|c}
+ & CG producers & Modelers & Choreographers & Tool Makers & Summarizers \\
+ \hline
+CG Producers & 7,683 & 101,470 & 40,171 & 34,818 & 824 \\
+Modelers & 3,885 & 53,658 & 18,876 & 26,092 & 582 \\
+Choreographers & 1,526 & 24,506 & 8,377 & 10,491 & 296 \\
+Tool Makers & 645 & 9,826 & 2,524 & 6,545 & 172 \\
+Summarizers & 964 & 3,675 & 1,188 & 1,144 & 162 \\
+\end{tabular}
+\caption{Number of item links between users of different categories, not counting self links. The datum in each cell indicates the number of links from the \emph{row} cateogory to the \emph{column} category.}
+\label{user-links}
+\end{figure}
+
+One interesting observation is that the modelers, choreographers, and tool makers upload many more items compared to other types of creators. Due to the fact that there are few videos in the three corresponding categories, we can infer that these three types of creators are actually very productive CG producers who can actually make their own resources and chose to share the resources to the community. Moreover, the large number of in-links they acquire are likey not through the CG productions they created but rather through the items containing reusable data. Thus, despite their small numbers, the modelers, choreographers, and tool makers are the life-blood of the community for two reasons. First, they account for almost a half of all the items produced, and, second, they provide reusable data for others to create more works.
+
+\section{Item Popularity}
+Our data set contains four indicators of item popularity: view count, comment count, Mylist count, and the indegree. \medskip
+
+{\bf Distributions.} As can be seen in Figure~\ref{distribution-of-popularity}, all popularity indicators except the view count follows power law distributions. The view count distribution exhibits a peak at $226$ views, suggesting that, even unpopular items usually accumulates several hundreds views. This phenomenon can be observed in the Flickr network studied by Cha \etal\ as well.\footnote{Cha \etal, however, plotted the cumulative distribution of item count versus view count. In their graph, the cumulative distribution plateaus when view count is low, which suggests that there are few items with low view counts too.} \medskip
+\begin{figure}[t]
+	\centering
+	\begin{tabular}{cc}
+		\includegraphics[width=2in]{view_count_vs_item_count_plot.png} &
+		\includegraphics[width=2in]{comment_count_vs_item_count_plot.png} \\
+		view count & comment count \\
+		\includegraphics[width=2in]{mylist_count_vs_item_count_plot.png} &
+		\includegraphics[width=2in]{indegree_vs_item_count_plot.png}\\
+		Mylist count & indegree
+	\end{tabular}
+	\caption{Distribution of item popularity.}
+	\label{distribution-of-popularity}
+\end{figure}
+
+{\bf Correlation between popularity indicators.} The view count, the comment count, and the Mylist count all have strong positive correlations among one another.\footnote{When calculating the correlations, we excluded one video which has disproportionately large number of comments (approximately 10,800,000 while the item with second most number of comments only has about 120,000 comments). This video was made specifically to fish a large number of comments. It urges the viewer to leave a comment by clicking a built-in button in the video.} However, the indegree has low correlations to all other indicators. (See Figure~\ref{correlation-table}.) We surmise that this is due to the fact that because the indegree measures popularity among creators, who tend to link to items that contain reusable data, not general viewers.
+\begin{figure}
+	\centering
+	\begin{tabular}{c|c|c|c|c}
+		& V & C & M & I \\
+		\hline
+		V & 1 & 0.82 & 0.93 & 0.16 \\
+		\hline
+		C & 0.82 & 1 & 0.76 & 0.09 \\
+		\hline
+		M & 0.93 & 0.76 & 1 & 0.14 \\
+		\hline
+		I & 0.16 & 0.09 & 0.14 & 1 \\
+	\end{tabular}
+	\caption{Correlation between four indicators of item popularity. Here, V = view count, C = comment count, M = Mylist count, and I = indegree.}
+	\label{correlation-table}
+\end{figure}
+
+\section{Network Topology}
+
+{\bf Number of components.} The item graph contains 96,744 components. The user graph contains 5,249 components. \medskip
+
+\section{Cascade Patterns}
+
+
+\bibliographystyle{plain}
+\bibliography{main}  
+
+\end{document}

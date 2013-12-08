@@ -61,6 +61,7 @@ File.open(ARGV[1], "w") do |f|
 		write_indented_line(f, "\"view_count\": #{item.view_count},")
 		write_indented_line(f, "\"comment_count\": #{item.comment_count},")
 		write_indented_line(f, "\"mylist_count\": #{item.mylist_count},")
+		write_indented_line(f, "\"uploaded_at\": \"#{item.uploaded_at}\",")
 		
 		indent_and_write(f, "\"tags\": [")		
 		tag_list = item.tags.map { |tag|
