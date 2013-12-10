@@ -43,3 +43,52 @@ def get_indegree_evolution_plot(G, data, target_id):
 	plt.xlabel("Days since uploaded")
 	plt.ylabel("Number of in-links")
 	return plt
+
+def save_power_law_graph(the_map, xlabel, ylabel, filename, fitLine=True, fit_exclude_threshold=1):
+	import numpy as np
+	import matplotlib.pyplot as plt
+
+	in_degree_map = the_map.copy()
+
+	if 0 in in_degree_map:
+		del in_degree_map[0]
+	count = len(in_degree_map)
+	xx = np.zeros((count,))
+	yy = np.zeros((count,))
+	count = 0
+	for indeg in in_degree_map:
+		if indeg != 0:
+			xx[count] = indeg
+			yy[count] = in_degree_map[indeg]
+			count += 1
+
+	remove_list = []
+	for indeg in in_degree_map:
+		count = in_degree_map[indeg]
+		if count <= fit_exclude_threshold:
+			remove_list.append(indeg)
+	for indeg in remove_list:
+		del in_degree_map[indeg]
+	count = len(in_degree_map)
+	xxxx = np.zeros((count,))
+	yyyy = np.zeros((count,))
+	count = 0
+	for indeg in in_degree_map:
+		if indeg != 0:
+			xxxx[count] = indeg
+			yyyy[count] = in_degree_map[indeg]
+			count += 1
+	coeffs = np.polyfit(np.log(xxxx) / np.log(10.0), np.log(yyyy) / np.log(10.0), 1)
+	right = -coeffs[1] / coeffs[0]
+	lx = np.linspace(0,right,1000)
+	ly = lx*coeffs[0] + coeffs[1]
+	
+	plt.scatter(np.log(xx) / np.log(10.0), np.log(yy) / np.log(10.0))
+	if fitLine:
+		plt.plot(lx, ly, 'g')
+	plt.xlabel(xlabel)
+	plt.ylabel(ylabel)
+	if fitLine:
+		plt.title("best fit line: %fx + %f" % (coeffs[0], coeffs[1]))
+	plt.savefig(filename)
+

@@ -33,7 +33,7 @@ for count in count_map:
 print "count with maximum item =", max_count
 print "associated item count", max_item_count
 
-def save_power_law_graph(the_map, xlabel, ylabel, filename, fitLine=True):
+def save_power_law_graph(the_map, xlabel, ylabel, filename, fitLine=True, fit_exclude_threshold=1):
 	in_degree_map = the_map.copy()
 
 	if 0 in in_degree_map:
@@ -51,7 +51,7 @@ def save_power_law_graph(the_map, xlabel, ylabel, filename, fitLine=True):
 	remove_list = []
 	for indeg in in_degree_map:
 		count = in_degree_map[indeg]
-		if count == 1:
+		if count <= fit_exclude_threshold:
 			remove_list.append(indeg)
 	for indeg in remove_list:
 		del in_degree_map[indeg]

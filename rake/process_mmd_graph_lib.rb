@@ -26,6 +26,9 @@ class ProcessMmdGraphTasks < FileProcessingTasks
 		indegree_vs_item_count_plot_tasks
 		indegree_evolution_plot_tasks
 
+		cascade_count_tasks
+		cascade_size_distribution_plot_tasks
+
 		plot_tasks		
 	end
 
@@ -112,6 +115,18 @@ class ProcessMmdGraphTasks < FileProcessingTasks
 		file indegree_evolution_plot_file => [item_graph_cat_chron_file_name] do
 			FileUtils.mkdir_p("#{options[:paper_dir]}/indegree_evolution")
 			run("python script/create_indegree_evolution_plot.py #{item_graph_cat_chron_file_name} #{options[:top_indegree_rank_count]} \"#{options[:paper_dir]}/indegree_evolution/\"")
+		end
+	end
+
+	no_index_file_tasks(:cascade_count, Proc.new {"#{dir_name}/cascade_count.txt"}) do
+		file cascade_count_file_name => [item_graph_cat_chron_file_name] do
+			run("python script/count_cascade_patterns.py #{item_graph_cat_chron_file_name} #{cascade_count_file_name} #{cascade_size_distribution_plot_file_name}")			
+		end
+	end
+
+	no_index_file_tasks(:cascade_size_distribution_plot, Proc.new {"#{options[:paper_dir]}/cascade_size_distribution.png"}) do
+		file cascade_size_distribution_plot_file_name => [item_graph_cat_chron_file_name] do
+			run("python script/count_cascade_patterns.py #{item_graph_cat_chron_file_name} #{cascade_count_file_name} #{cascade_size_distribution_plot_file_name}")			
 		end
 	end
 end

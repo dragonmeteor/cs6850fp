@@ -88,7 +88,7 @@ Creating 3D computer graphics content is a complex process that requires many ty
 By the above criteria, we have found that there are 225,916 CG production items, 13,377 modeling items, 2,582 choreography items, 2,306 tool items, and 1,365 summarizing items. While an item can belong to more than one category, we found only 435 such items with 11,653 edges incident to them. Statistics of items that belong to only a single category are given in Figure~\ref{item-statistics-by-category}. We can readily observe that, items in the modeling, choreography, and tool making categories receive many more in-links than those in the other two categories, reflecting the practice of creators citing sources of the data they use in their works.\medskip
 \begin{figure*}[t]
 	\centering
-	\begin{tabular}{c|c|c|c|c|c}
+	\begin{tabular}{c|r|r|r|r|r}
 		Category & Items & In-Links & In-Links per Item & Out-Links & Out-Links per Item \\
 		\hline
 		CG Production & 225,916 & 129,250 & 0.57 & 368,444 & 1.63\\
@@ -108,11 +108,19 @@ We found that there are 15,092 are CG producers ($82.03\%$), 1,962 modelers ($10
 \begin{figure}[t]
 	\centering
 	\newcolumntype{A}{>{\centering\arraybackslash} m{1cm}}
-	\newcolumntype{B}{>{\centering\arraybackslash} m{1.5cm}}
+	\newcolumntype{B}{>{\raggedleft\arraybackslash} m{1.5cm}}
 	\newcolumntype{C}{>{\centering\arraybackslash} m{2.5cm}}
-	\newcolumntype{D}{>{\centering\arraybackslash} m{1.25cm}}	
+	\newcolumntype{D}{>{\raggedleft\arraybackslash} m{1.25cm}}	
+	\newcolumntype{E}{>{\centering\arraybackslash} m{1.5cm}}	
 	\begin{tabular}{C|D|D|B|D|B|D|B}
-		Category & Creators & Items & Items per Creator & In-Links & In-Links per Item & Out-Links & Out-Links per Item \\
+		Category & 
+		\multicolumn{1}{c|}{Creators} & 
+		\multicolumn{1}{c|}{Items} & 
+		\multicolumn{1}{E|}{Items per Creator} & 
+		\multicolumn{1}{c|}{In-Links} & 
+		\multicolumn{1}{E|}{In-Links per Item} & 
+		\multicolumn{1}{c|}{Out-Links} & 
+		\multicolumn{1}{E}{Out-Links per Item} \\
 		\hline
 		CG Producers & 15,092 & 124,408 & 8.24 & 14,703 & 0.12 & 184,966 & 1.49\\
 		Modelers & 1,962 & 76,303 & 38.89 & 193,135 & 2.53 & 103,093 & 1.35\\
@@ -120,13 +128,13 @@ We found that there are 15,092 are CG producers ($82.03\%$), 1,962 modelers ($10
 		Tool Makers & 399 & 13,823 & 34.64 & 79,090 & 5.72 & 19,712 & 1.43\\
 		Summarizers & 292 & 4,332 & 14.84 & 2,036 & 0.47 & 7,133 & 1.65
 	\end{tabular}
-	\caption{Creator statistics by categories. 53,647 self links were ignored when counting links.}
+	\caption{Creator statistics by categories. 53,647 self-citations were ignored when counting links.}
 	\label{creator-statistics-by-category}
 \end{figure}
 
 \begin{figure}[t]
 \centering
-\begin{tabular}{c|c|c|c|c|c}
+\begin{tabular}{c|r|r|r|r|r}
  & CG producers & Modelers & Choreographers & Tool Makers & Summarizers \\
  \hline
 CG Producers & 7,683 & 101,470 & 40,171 & 34,818 & 824 \\
@@ -135,7 +143,7 @@ Choreographers & 1,526 & 24,506 & 8,377 & 10,491 & 296 \\
 Tool Makers & 645 & 9,826 & 2,524 & 6,545 & 172 \\
 Summarizers & 964 & 3,675 & 1,188 & 1,144 & 162 \\
 \end{tabular}
-\caption{Number of item links between users of different categories, not counting self links. The datum in each cell indicates the number of links from the \emph{row} cateogory to the \emph{column} category.}
+\caption{Number of item links between users of different categories, not counting self-citations. The datum in each cell indicates the number of links from the \emph{row} cateogory to the \emph{column} category.}
 \label{user-links}
 \end{figure}
 
@@ -147,19 +155,18 @@ Our data set contains four indicators of item popularity: view count, comment co
 {\bf Distributions.} As can be seen in Figure~\ref{distribution-of-popularity}, all popularity indicators except the view count follows power law distributions. The view count distribution exhibits a peak at $226$ views, suggesting that, even unpopular items usually accumulates several hundreds views. This phenomenon can be observed in the Flickr network studied by Cha \etal\ as well.\footnote{Cha \etal, however, plotted the cumulative distribution of item count versus view count. In their graph, the cumulative distribution plateaus when view count is low, which suggests that there are few items with low view counts too.} \medskip
 \begin{figure}[t]
 	\centering
-	\begin{tabular}{cc}
-		\includegraphics[width=2in]{view_count_vs_item_count_plot.png} &
-		\includegraphics[width=2in]{comment_count_vs_item_count_plot.png} \\
-		view count & comment count \\
-		\includegraphics[width=2in]{mylist_count_vs_item_count_plot.png} &
-		\includegraphics[width=2in]{indegree_vs_item_count_plot.png}\\
-		Mylist count & indegree
+	\begin{tabular}{cccc}
+		\includegraphics[width=1.5in]{view_count_vs_item_count_plot.png} &
+		\includegraphics[width=1.5in]{comment_count_vs_item_count_plot.png} &
+		\includegraphics[width=1.5in]{mylist_count_vs_item_count_plot.png} &
+		\includegraphics[width=1.5in]{indegree_vs_item_count_plot.png}\\
+		view count & comment count & Mylist count & indegree
 	\end{tabular}
 	\caption{Distribution of item popularity.}
 	\label{distribution-of-popularity}
 \end{figure}
 
-{\bf Correlation between popularity indicators.} The view count, the comment count, and the Mylist count all have strong positive correlations among one another.\footnote{When calculating the correlations, we excluded one video which has disproportionately large number of comments (approximately 10,800,000 while the item with second most number of comments only has about 120,000 comments). This video was made specifically to fish a large number of comments. It urges the viewer to leave a comment by clicking a built-in button in the video.} However, the indegree has low correlations to all other indicators. (See Figure~\ref{correlation-table}.) We surmise that this is due to the fact that because the indegree measures popularity among creators, who tend to link to items that contain reusable data, not general viewers.
+{\bf Correlation between popularity indicators.} The view count, the comment count, and the Mylist count all have strong positive correlations among one another.\footnote{When calculating the correlations, we excluded one video which has disproportionately large number of comments (approximately 10,800,000 while the item with second most number of comments only has about 120,000 comments). This video was made specifically to fish a large number of comments. It urges the viewer to leave a comment by clicking a built-in button in the video.} However, the indegree has low correlations to all other indicators. (See Figure~\ref{correlation-table}.) We surmise that this is due to the fact that because the indegree measures popularity among creators, who tend to link to items that contain reusable data, not general viewers. \medskip
 \begin{figure}
 	\centering
 	\begin{tabular}{c|c|c|c|c}
@@ -177,6 +184,71 @@ Our data set contains four indicators of item popularity: view count, comment co
 	\label{correlation-table}
 \end{figure}
 
+{\bf Most in-linked items.} We examined the 30 most in-linked items and found 17 items in the tool making category, 6 in the modeling category, and 7 in the CG category. However, upon closer inspection, all of the items in the CG category contains web links to either character models or dance motions. As such, these items should have been classified as being in the modeling or choreogrphy category, but we could not classify them as such because they lacked relevant tags. 
+
+The most in-linked item is the video introducing MMD itself, and the 9 most in-linked items all provide some kind of tools or data for creating visual effects such as luminous objects, shadow, or the sky. The total number of in-links to the 17 most popular tool videos is 42,379 which is about $62\%$ of all the in-links items in this category have. While this phenomenon can be attributed to a strong rich-get-richer effect, we suggest that these tools that are fundamental to CG production and thus are used by many creators in the community. \medskip
+
+{\bf Temporal evolution of indegree.} Inspecting the 30 most in-linked items, we observed three distinct patterns of indegree evolution over time as depicted in Figure~\ref{temporal-evolution-of-indegree-01}. First is the ``convex'' evolution where the rate the item gains more links increases as the item gets older. Second is the ``linear'' case where the item always steadly gains in-links at rates that do not fluctuate wildly. Third is the ``concave'' case where the item rapidly gains many in-links in the first few days after it was uploaded and then the gain rate decreases with time.
+\begin{figure}
+	\centering
+	\begin{tabular}{cccc}
+		\includegraphics[width=2in]{indegree_evolution/0001.png} &
+		\includegraphics[width=2in]{indegree_evolution/0015.png} &
+		\includegraphics[width=2in]{indegree_evolution/0017.png} \\
+		Convex &
+		Linear &
+		Concave		
+	\end{tabular}
+ 	\caption{The three patterns of indegree growth.}
+ 	\label{temporal-evolution-of-indegree-01}
+\end{figure}
+
+Among the 30 items, we observe that the tool making items often exhibit convex growth pattern. We conjecture that this is because these items are useful in general to all creators and that the community of MMD creators gets larger with time. On the other hand, the concave growth pattern is exclusive to modeling and choreography video, suggesting that, after a new popular 3D model or motion become available, it instantly becomes a fad, inducing many creators to try their hands on it. However, it time goes on, the interest subsides due to the availability of other models and motions.
+
+In contrast to Cha \etal, we do not observe any stagnations among the 30 most popular videos, and we only observe sharp increase in indegree only after an item was uploaded. This suggests that a reusable piece of data will always be constantly be used and cited. Moreover, unlike favourites in Flickr, the indegree evolution in our graph is not influenced by external events such as a photo's being featured or winning an award.
+
+We also attempted to classify the indegree growth patterns of items by computing the sum $$A(T) = \sum_{t=0}^T \mathrm{indeg}(t) - \frac{t}{T} \mathrm{indeg}(T)$$ where $T$ is a fixed number of days after the item was uploaded. We classify the growth pattern as:
+\begin{itemize}
+ 	\item ``linear'' if $|A(T)| \leq (T+1) \mathrm{indeg}(T) / 20$, 
+ 	\item ``concave'' if $A(T) > (T+1)\mathrm{indeg}(T) / 20$, and
+ 	\item ``convex'' if $A(T) < -(T+1)\mathrm{index}(T)/20$. 
+\end{itemize}
+The intuition is that the sum $A(T)$ is the area under the curve of the difference between the indegree and the perfect linear growth over the period of $T+1$ days. If the indegree has linear growth, this area should be close to zero. If the indegree has concave growth, it should mostly be above the graph of the perfect linear growth and the area should be highly positive. Similarly, convex growth implies highly negative area under the curve. 
+
+The results of classifying the growth patterns of ``popular'' items---those with indegree more than 20---over the period of 1 year after they are uploaded are shown in Figure~\ref{growth-patterns-of-popular-items}. We can see that the ratio of items with convex growth patterns in the tool making category is the highest among all categories, and that the ratio of items with concave growth patterns are much higher in all other categories. This confirms our prior observation among the 30 most popular items that tool making items tend to exhibit linear or convex growth, but items in other categories tend to exhibit concave growth.
+\begin{figure}
+	\centering
+	\begin{tabular}{c|r|r|r|r}
+	& \multicolumn{3}{c|}{Growth Pattern} & \\
+	\cline{2-4}
+	Category & \multicolumn{1}{c|}{Convex} & \multicolumn{1}{c|}{Linear} & \multicolumn{1}{c|}{Concave} & \multicolumn{1}{c}{Total} \\
+	\hline
+	CG Production & 37 & 58 & 223 & 318 \\
+	Modeling & 73 & 153 & 327 & 553 \\
+	Choreography & 10 & 50 & 225 & 285 \\
+	Tool Making & 39 & 39 & 41 & 119 \\
+	Summarizing & 0 & 0 & 0 & 0 \\
+	\hline
+	All & 159 & 300 & 816 & 1,275
+	\end{tabular}	
+	\caption{Number of items that achieved more than 20 in-links after 1 year they were uploaded, classified by growth patterns and categories.}
+	\label{growth-patterns-of-popular-items}
+\end{figure}
+
+We also investigated the indegree evolution of ``unpopular items,'' i.e. those achieved at most 20 in-links after 1 year after uploaded. Figure~\ref{unpopular-items-achieving-cerntain-fraction-of-integree} shows the number of items achieving a certain percentage of their indegree at the end of the period of 1 year as a function of time. According to Figure~\ref{unpopular-items-achieving-cerntain-fraction-of-integree}a, more than half of the items obtained all their in-links within the first month after being uploaded. However, we found that more than half of the unpopular items ($17,658$ out of $30,025$) have self-citations as their only in-links. Discounting self-citations, we found that it takes longer for items to gain all their in-links from others, as can be seen in Figure~\ref{unpopular-items-achieving-cerntain-fraction-of-integree}b. Still, growth pattern classification (results not shown in this paper) indicates that most items exhibit concave growth patterns.
+\begin{figure}
+	\centering
+	\begin{tabular}{cc}
+		\includegraphics[width=2.5in]{unpopular_items_indegree_growth_with_self_link.png} &
+		\includegraphics[width=2.5in]{unpopular_items_indegree_growth_no_self_link.png} \\
+		(a) & (b)
+	\end{tabular}
+	\caption{Number of items achieving a certain percentage of their indegree over the period of one year as a function of elapsed time after being uploaded. In (a), the indegree calculation includes self-citations but not in (b).}
+	\label{unpopular-items-achieving-cerntain-fraction-of-integree}
+\end{figure}
+
+In conclusion, most items gains indegree early in their lifetime and thus exhibit concave patterns of indegree growth. However, popular items in the tool making category are more likely to gain in-links at a faster rate as time progresses. Most unpopular items gain in-links via self-citations, which typically happen within the first month after the item was uploaded. This is most likely due to creators' linking to their previous work when uploading a new one. Discounting self-citations, it takes much longer time for an unpopular item to gain a link from other creators.
+ 
 \section{Network Topology}
 
 {\bf Number of components.} The item graph contains 96,744 components. The user graph contains 5,249 components. \medskip
