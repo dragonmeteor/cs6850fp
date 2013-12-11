@@ -12,12 +12,13 @@ import networkx.linalg
 import numpy.linalg
 
 
-if len(sys.argv) < 4:
-	print "python script/count_cascade_patterns.py <json-file-name> <output-file-name> <distribution-graph-file-name>"
+if len(sys.argv) < 5:
+	print "python script/count_cascade_patterns.py <json-file-name> <include-self-link> <output-file-name> <distribution-graph-file-name>"
 	exit()
 
-output_file_name = sys.argv[2]
-distribution_graph_file_name = sys.argv[3]
+include_self_link = (sys.argv[2].lower() == "yes")
+output_file_name = sys.argv[3]
+distribution_graph_file_name = sys.argv[4]
 
 sys.stdout.write("Loading JSON ... ")
 json_data=open(sys.argv[1])
@@ -26,20 +27,7 @@ json_data.close()
 print "DONE"
 
 sys.stdout.write("Constructing graph ... ")
-G = nx.DiGraph()
-nodes = data["nodes"]
-for item_name in data["nodes"]:	
-	if len(nodes[item_name]["categories"]) == 1:
-		G.add_node(item_name)
-for edge in data["edges"]:	
-	node0 = nodes[edge[0]]
-	node1 = nodes[edge[1]]
-	if len(node0["categories"]) != 1:
-		continue
-	if len(node1["categories"]) != 1:
-		continue
-	if node0["user"] != node1["user"]:
-		G.add_edge(edge[0], edge[1])
+G = construct_item_graph(data, exclude_multi_category_nodes=True, exclude_self_links=(not include_self_link))
 print "DONE"
 
 def dictionary_to_array(d):
@@ -84,22 +72,6 @@ def signature(H):
 
 	return pprint.pformat(sig)
 
-def get_cascade(G, nodes, node_id):
-	H = nx.DiGraph()
-	node_list = [node_id]			
-	explored_set = set()
-	while len(node_list) > 0:
-		node_id = node_list[-1]
-		H.add_node(node_id, category=nodes[node_id]["categories"][0])
-		del node_list[-1]
-		explored_set.add(node_id)
-		for edge in G.in_edges_iter(node_id):
-			H.add_edge(edge[0], node_id)
-			if edge[0] not in explored_set:	
-				explored_set.add(edge[0])
-				node_list.append(edge[0])
-	return H
-
 nodes = data["nodes"]
 starter_count = 0
 trivial_cascade_count = 0
@@ -108,37 +80,38 @@ sig_hash = {}
 processed_count = 0
 for node_id in nodes:
 	root_id = node_id
-	if G.out_degree(node_id) == 0:
-		starter_count += 1
-		if G.in_degree(node_id) == 0:
-			trivial_cascade_count += 1
-		else:
-			H = get_cascade(G, nodes, node_id)
-			if H.number_of_nodes() not in size_count:
-				size_count[H.number_of_nodes()] = 0
-			size_count[H.number_of_nodes()] += 1
+	if G.out_degree(node_id) != 0:
+		continue
+	starter_count += 1
+	if G.in_degree(node_id) == 0:
+		trivial_cascade_count += 1
+	else:
+		H = get_cascade(G, nodes, node_id)
+		if H.number_of_nodes() not in size_count:
+			size_count[H.number_of_nodes()] = 0
+		size_count[H.number_of_nodes()] += 1
 
-			sig = signature(H)
-			if sig not in sig_hash:
-				sig_hash[sig] = []
-			graph_lists = sig_hash[sig]
-			found = False
-			for graph_class in graph_lists:
-				if graph_class["example"] == None:
-					break
-				F = graph_class["example"]				
-				if nx.is_isomorphic(F, H, node_match=lambda d0, d1: d0["category"] == d1["category"]):
-					found = True
-					graph_class["count"] += 1
-			if not found:
-				if H.number_of_nodes() < 10:
-					graph_lists.append({"example": H, "count":1, "root": root_id, "size": H.number_of_nodes()})
-				else:
-					graph_lists.append({"example": None, "count":1, "root": root_id, "size": H.number_of_nodes()})
-			
-			processed_count += 1
-			if processed_count % 100 == 0:
-				print "Processed", processed_count, "graphs"
+		sig = signature(H)
+		if sig not in sig_hash:
+			sig_hash[sig] = []
+		graph_lists = sig_hash[sig]
+		found = False
+		for graph_class in graph_lists:
+			if graph_class["example"] == None:
+				break
+			F = graph_class["example"]				
+			if nx.is_isomorphic(F, H, node_match=lambda d0, d1: d0["category"] == d1["category"]):
+				found = True
+				graph_class["count"] += 1
+		if not found:
+			if H.number_of_nodes() < 10:
+				graph_lists.append({"example": H, "count":1, "root": root_id, "size": H.number_of_nodes()})
+			else:
+				graph_lists.append({"example": None, "count":1, "root": root_id, "size": H.number_of_nodes()})
+		
+		processed_count += 1
+		if processed_count % 100 == 0:
+			print "Processed", processed_count, "graphs"
 
 max_size = 0
 for size in size_count:
@@ -156,7 +129,7 @@ print "Maximum cascade size =", max_size
 #for size in one_list:
 #	del size_count[size]
 
-save_power_law_graph(size_count, "log(number of vertices in cascades)", "log(number of cascades)", distribution_graph_file_name, True, 3)
+save_power_law_graph(size_count, "log(number of vertices in cascades)", "log(number of cascades)", distribution_graph_file_name, True, 11)
 
 distrib = []
 for sig in sig_hash:
@@ -164,6 +137,11 @@ for sig in sig_hash:
 distrib.sort(key=lambda x:x["count"], reverse=True)
 fout = open(output_file_name, "wt")
 for cascade in distrib:
-	fout.write("%d %s %d" % (cascade["size"], cascade["root"], cascade["count"]))
+	H = get_cascade(G, nodes, cascade["root"])	
+	max_depth = 0
+	for node in H.nodes_iter():		
+		if max_depth < H.node[node]["depth"]:
+			max_depth = H.node[node]["depth"]
+	fout.write("%d %s %d %d" % (cascade["size"], cascade["root"], cascade["count"], max_depth+1))
 	fout.write("\n")
 fout.close()

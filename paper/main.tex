@@ -70,7 +70,7 @@ A creator uploaded $13.32$ items on average. However, the distribution of users 
 
 We also perfom other cleanups after activity classification in order to simplify further analysis of the graph. These are discussed in details in the next section.
 
-\section{Activity Categorization}
+\section{Activity Categorization} \label{activity-classification}
 
 Creating 3D computer graphics content is a complex process that requires many types of expertise including 3D modeling, motion authoring, and movie direction. As a result, a creator of MMD videos rarely has all the above expertise and has to rely on data such as 3D models and motions that are provided by others. Creators who provide usable data also make announcements of their data's being publicly available by creating MMD videos featuring the usage, and creators who use the data sometimes give credit to the former by ``citing'' the announcement videos either in her own video description or in the Content Tree. \medskip
 
@@ -148,6 +148,10 @@ Summarizers & 964 & 3,675 & 1,188 & 1,144 & 162 \\
 \end{figure}
 
 One interesting observation is that the modelers, choreographers, and tool makers upload many more items compared to other types of creators. Due to the fact that there are few videos in the three corresponding categories, we can infer that these three types of creators are actually very productive CG producers who can actually make their own resources and chose to share the resources to the community. Moreover, the large number of in-links they acquire are likey not through the CG productions they created but rather through the items containing reusable data. Thus, despite their small numbers, the modelers, choreographers, and tool makers are the life-blood of the community for two reasons. First, they account for almost a half of all the items produced, and, second, they provide reusable data for others to create more works.
+
+\section{Network Topology}
+
+{\bf Number of components.} The item graph contains 96,744 components. The user graph contains 5,249 components. \medskip
 
 \section{Item Popularity}
 Our data set contains four indicators of item popularity: view count, comment count, Mylist count, and the indegree. \medskip
@@ -249,12 +253,113 @@ We also investigated the indegree evolution of ``unpopular items,'' i.e. those a
 
 In conclusion, most items gains indegree early in their lifetime and thus exhibit concave patterns of indegree growth. However, popular items in the tool making category are more likely to gain in-links at a faster rate as time progresses. Most unpopular items gain in-links via self-citations, which typically happen within the first month after the item was uploaded. This is most likely due to creators' linking to their previous work when uploading a new one. Discounting self-citations, it takes much longer time for an unpopular item to gain a link from other creators.
  
-\section{Network Topology}
-
-{\bf Number of components.} The item graph contains 96,744 components. The user graph contains 5,249 components. \medskip
-
 \section{Cascade Patterns}
 
+As defined in \cite{Gruhl:2004}, a cascade is a maximal directed acyclic subgraph rooted at a node with no outgoing edges, the \emph{cascade originator}. A cascade represents how information from the cascade originator spreads to other items. Leskovec \etal~observe that cascades has two main shapes: the \emph{star} and the \emph{chain}.
+
+In our graph, a link from one item to another is likely an indication that the linking item, in its creation, uses some piece of data from the linked item. As such, we may predict that cascade originators in our graph are likely to be modeling, choreography, and tool making items. Since data from these items can be used to create many different works, we expect that a cascade originator should generally have many items linking it. We also observed in Section~\ref{activity-classification} that there are many more CG production items which rarely provide reusable data than those that do. As a result, an item linking to a cascade originator is likely to be a CG production item and likely has no in-links. That is, we should see more stars than chains in general.
+
+To put this hypothesis to a test, we implemented the algorithm to count cascade pattern as described in \cite{Leskovec:2006}. However, when performing graph isomorphism tests, we consider two nodes the same if and only if they have the same categories. In effect, each node in our cascade pattern can have one of the five \emph{colors} determined by its category, and two cascades are considered the same if and only if their topologies and colors match.
+
+The distribution of the cascade patterns of the full graph is given in Figure~\ref{cascade-patterns-with-self-links}.
+\begin{figure}
+	\centering
+	\begin{tabular}{ccccccc}
+		\includegraphics[scale=0.5]{cascades_with_self_links/0001.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0002.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0003.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0004.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0005.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0006.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0007.png} \\		
+		$G_1$: 5839 &
+		$G_2$: 795 &
+		$G_3$: 607 &
+		$G_4$: 589 &
+		$G_5$: 307 &
+		$G_6$: 272 &
+		$G_7$: 169 \\		
+		\includegraphics[scale=0.5]{cascades_with_self_links/0008.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0009.png} &		
+		\includegraphics[scale=0.5]{cascades_with_self_links/0010.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0011.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0012.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0013.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0014.png} \\		
+		$G_8$: 129 &
+		$G_9$: 102 &
+		$G_{10}$: 93 &
+		$G_{11}$: 88 &
+		$G_{12}$: 85 &
+		$G_{13}$: 72 &
+		$G_{14}$: 71 \\
+		\includegraphics[scale=0.5]{cascades_with_self_links/0015.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0016.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0017.png} &		
+		\includegraphics[scale=0.5]{cascades_with_self_links/0018.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0019.png} &
+		\includegraphics[scale=0.5]{cascades_with_self_links/0020.png} &
+		& \\
+		%\includegraphics[scale=0.5]{cascades_with_self_links/0021.png} \\
+		$G_{15}$: 70 &
+		$G_{16}$: 68 &
+		$G_{17}$: 65 &
+		$G_{18}$: 57 &
+		$G_{19}$: 56 &
+		$G_{20}$: 55 &
+		%$G_{21}$: 63 
+	\end{tabular}
+	\caption{}
+	\label{cascade-patterns-with-self-links}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\begin{tabular}{ccccc}
+		\includegraphics[scale=0.5]{cascades_no_self_links/0001.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0002.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0003.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0004.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0005.png} \\
+		$G_1$: 2700 &
+		$G_2$: 887 &
+		$G_3$: 595 &
+		$G_4$: 455 &
+		$G_5$: 435 &		
+		\includegraphics[scale=0.5]{cascades_no_self_links/0006.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0007.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0008.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0009.png} &		
+		\includegraphics[scale=0.5]{cascades_no_self_links/0010.png} \\		
+		$G_6$: 191 &
+		$G_7$: 184 &
+		$G_8$: 138 &
+		$G_9$: 134 &
+		$G_{10}$: 132 &		
+		\includegraphics[scale=0.5]{cascades_no_self_links/0011.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0012.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0013.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0014.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0015.png} \\		
+		$G_{11}$: 121 &
+		$G_{12}$: 85 &
+		$G_{13}$: 84 &
+		$G_{14}$: 83 &
+		$G_{15}$: 74 \\		
+		\includegraphics[scale=0.5]{cascades_no_self_links/0016.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0017.png} &		
+		\includegraphics[scale=0.5]{cascades_no_self_links/0018.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0019.png} &
+		\includegraphics[scale=0.5]{cascades_no_self_links/0020.png} \\
+		$G_{16}$: 67 &
+		$G_{17}$: 64 &
+		$G_{18}$: 60 &
+		$G_{19}$: 54 &
+		$G_{20}$: 52 		
+	\end{tabular}
+	\caption{}
+	\label{cascade-patterns-no-self-links}
+\end{figure}
 
 \bibliographystyle{plain}
 \bibliography{main}  
