@@ -6,7 +6,7 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
-\usepackage{url}
+\usepackage{hyperref}
 \usepackage{array}
 
 \newcommand{\etal}{{et~al.}}
@@ -67,7 +67,6 @@ A creator uploaded $13.32$ items on average. However, the distribution of users 
 	\caption{Plot of number of items uploaded versus the number of creators that uploaded that number of items, in log-log scale. It can be seen that the distribution follows a power law.}
 	\label{user-vs-item-count}
 \end{figure}
-
 We also perfom other cleanups after activity classification in order to simplify further analysis of the graph. These are discussed in details in the next section.
 
 \section{Activity Categorization} \label{activity-classification}
@@ -151,7 +150,11 @@ One interesting observation is that the modelers, choreographers, and tool maker
 
 \section{Network Topology}
 
-{\bf Number of components.} The item graph contains 96,744 components. The user graph contains 5,249 components. \medskip
+{\bf Number of components.} The item graph contains 96,744 components. The user graph contains 5,249 components. For a breakdown of elements by type, see Figure 4. \medskip
+
+{\bf Distribution of In Links}
+
+\medskip
 
 \section{Item Popularity}
 Our data set contains four indicators of item popularity: view count, comment count, Mylist count, and the indegree. \medskip
@@ -259,9 +262,9 @@ As defined in \cite{Gruhl:2004}, a cascade is a maximal directed acyclic subgrap
 
 In our graph, a link from one item to another is likely an indication that the linking item, in its creation, uses some piece of data from the linked item. As such, we may predict that cascade originators in our graph are likely to be modeling, choreography, and tool making items. Since data from these items can be used to create many different works, we expect that a cascade originator should generally have many items linking it. We also observed in Section~\ref{activity-classification} that there are many more CG production items which rarely provide reusable data than those that do. As a result, an item linking to a cascade originator is likely to be a CG production item and likely has no in-links. That is, we should see more stars than chains in general.
 
-To put this hypothesis to a test, we implemented the algorithm to count cascade pattern as described in \cite{Leskovec:2006}. However, when performing graph isomorphism tests, we consider two nodes the same if and only if they have the same categories. In effect, each node in our cascade pattern can have one of the five \emph{colors} determined by its category, and two cascades are considered the same if and only if their topologies and colors match.
+To put this hypothesis to a test, we implemented the algorithm to count cascade patterns as described in \cite{Leskovec:2006}. However, when performing graph isomorphism tests, we consider two nodes the same if and only if they have the same categories. In effect, each node in our cascade pattern can have one of the five \emph{colors} determined by its category, and two cascades are considered the same if and only if their topologies and colors match.
 
-The distribution of the cascade patterns of the full graph is given in Figure~\ref{cascade-patterns-with-self-links}.
+The cascade patterns and the number of the occurrences are given in Figure~\ref{cascade-patterns-with-self-links}.\footnote{The list of 100 most common cascades can be found at \url{http://www.cs.cornell.edu/~pramook/cs6850/cascades_with_self_links/} and \url{http://www.cs.cornell.edu/~pramook/cs6850/cascades_no_self_links/}.} The distribution of the cascade sizes follows a power law with exponent $-1.53$. We observed that the most frequent patterns are stars and chains, consistent with the results of Gruhl \etal. However, to our surprise, long chains of CG production items are among the most common cascade patterns. In fact, the 25th most frequent pattern, with 40 occurences, is the chain of 6 CG items, and the 32nd is the chain of 7 CG items. We also see tall structures such as $G_5$ and $G_{10}$ among the most common patterns.
 \begin{figure}
 	\centering
 	\begin{tabular}{ccccccc}
@@ -299,8 +302,7 @@ The distribution of the cascade patterns of the full graph is given in Figure~\r
 		\includegraphics[scale=0.5]{cascades_with_self_links/0018.png} &
 		\includegraphics[scale=0.5]{cascades_with_self_links/0019.png} &
 		\includegraphics[scale=0.5]{cascades_with_self_links/0020.png} &
-		& \\
-		%\includegraphics[scale=0.5]{cascades_with_self_links/0021.png} \\
+		\\
 		$G_{15}$: 70 &
 		$G_{16}$: 68 &
 		$G_{17}$: 65 &
@@ -309,9 +311,11 @@ The distribution of the cascade patterns of the full graph is given in Figure~\r
 		$G_{20}$: 55 &
 		%$G_{21}$: 63 
 	\end{tabular}
-	\caption{}
+	\caption{The top 20 most frequent cascade patterns in the item graph. Red $=$ CG production, green = modeling, blue = choreography, orange = tool making, and magenta = summarizing.}
 	\label{cascade-patterns-with-self-links}
 \end{figure}
+
+The frequent appearances of tall structures are results of self citations. Figure~\ref{cascade-patterns-no-self-links} shows the 20 most common cascades after removing all self citations from the graph. We can now observe that the chain of 3 nodes become much less common. The chain of 4 nodes now ranks the 34th, and the chain of 5 nodes is not among the 200 most common patterns. The most common patterns are now stars as predicted earlier.
 
 \begin{figure}
 	\centering
@@ -321,45 +325,59 @@ The distribution of the cascade patterns of the full graph is given in Figure~\r
 		\includegraphics[scale=0.5]{cascades_no_self_links/0003.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0004.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0005.png} \\
-		$G_1$: 2700 &
-		$G_2$: 887 &
-		$G_3$: 595 &
-		$G_4$: 455 &
-		$G_5$: 435 &		
+		$H_1$: 2700 &
+		$H_2$: 887 &
+		$H_3$: 595 &
+		$H_4$: 455 &
+		$H_5$: 435 \\		
 		\includegraphics[scale=0.5]{cascades_no_self_links/0006.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0007.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0008.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0009.png} &		
 		\includegraphics[scale=0.5]{cascades_no_self_links/0010.png} \\		
-		$G_6$: 191 &
-		$G_7$: 184 &
-		$G_8$: 138 &
-		$G_9$: 134 &
-		$G_{10}$: 132 &		
+		$H_6$: 191 &
+		$H_7$: 184 &
+		$H_8$: 138 &
+		$H_9$: 134 &
+		$H_{10}$: 132 \\		
 		\includegraphics[scale=0.5]{cascades_no_self_links/0011.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0012.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0013.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0014.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0015.png} \\		
-		$G_{11}$: 121 &
-		$G_{12}$: 85 &
-		$G_{13}$: 84 &
-		$G_{14}$: 83 &
-		$G_{15}$: 74 \\		
+		$H_{11}$: 121 &
+		$H_{12}$: 85 &
+		$H_{13}$: 84 &
+		$H_{14}$: 83 &
+		$H_{15}$: 74 \\		
 		\includegraphics[scale=0.5]{cascades_no_self_links/0016.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0017.png} &		
 		\includegraphics[scale=0.5]{cascades_no_self_links/0018.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0019.png} &
 		\includegraphics[scale=0.5]{cascades_no_self_links/0020.png} \\
-		$G_{16}$: 67 &
-		$G_{17}$: 64 &
-		$G_{18}$: 60 &
-		$G_{19}$: 54 &
-		$G_{20}$: 52 		
+		$H_{16}$: 67 &
+		$H_{17}$: 64 &
+		$H_{18}$: 60 &
+		$H_{19}$: 54 &
+		$H_{20}$: 52 		
 	\end{tabular}
-	\caption{}
+	\caption{The top 20 most frequent cascade patterns in the item graph with self-citation edges removed.}
 	\label{cascade-patterns-no-self-links}
 \end{figure}
+
+\begin{figure}
+	\centering
+	\begin{tabular}{cc}
+		\includegraphics[width=2in]{cascade_size_distribution_with_self_links.png} &
+		\includegraphics[width=2in]{cascade_size_distribution_no_self_links.png} \\
+		(a) & (b)
+	\end{tabular}
+	\caption{Cascade size distribution (a) in the full graph and (b) after self-citaton edges removed.}
+	\label{cascade-size-distribution}
+\end{figure}
+
+We also predicted that the cascade originators should mostly be modeling, choreography, and tool making items, but Figure~\ref{cascade-patterns-no-self-links} shows that CG production items are actually the most common cascade originators. We attribute this discrepancy to two factors. The first is that we could not accurately identify all items that distribute reusable data, and the second is that we did not take into account the situation where a summarizing item citing a CG production item it summarizes, which is represented by $H_5$ and $H_{19}$. The relative frequencies of modeling, choreography, and tool making items as cascade originators are consistent with the number of available items in each category. (That is, we see more modeling items as cascade originators because there are many more modeling items than those in other categories.)
+
 
 \bibliographystyle{plain}
 \bibliography{main}  

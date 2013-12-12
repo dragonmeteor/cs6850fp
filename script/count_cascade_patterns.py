@@ -62,13 +62,13 @@ def signature(H):
 	sig.append(dictionary_to_array(indeg_map))
 	sig.append(dictionary_to_array(outdeg_map))
 
-	if H.number_of_nodes() < 100:
-		L = networkx.linalg.laplacian_matrix(H.to_undirected())
-		U, s, V = numpy.linalg.svd(L)
-		ss = []
-		for i in xrange(H.number_of_nodes()):
-			ss.append("%0.4f" % s[i])
-		sig.append(ss)
+	#if H.number_of_nodes() < 100:
+	#	L = networkx.linalg.laplacian_matrix(H.to_undirected())
+	#	U, s, V = numpy.linalg.svd(L)
+	#	ss = []
+	#	for i in xrange(H.number_of_nodes()):
+	#		ss.append("%0.4f" % s[i])
+	#	sig.append(ss)
 
 	return pprint.pformat(sig)
 

@@ -7,7 +7,26 @@ class ProcessMmdGraphTasks < FileProcessingTasks
 			:db_config_file => "db/config.yml",
 			:paper_dir => "paper",
 			:top_indegree_rank_count => 30,
-			:top_cascade_count => 200
+			:top_cascade_count => 200,
+
+			:user_item_exponent => -1.6,
+			:max_user_item_count => 300,
+			:category_prob => {
+				"cg" => 220000.0/240000, 
+				"model" => 14000.0/240000, 
+				"motion" => 3000.0/240000, 
+				"tool" => 2000.0/240000, 
+				"editing" => 1000.0/240000},
+			:misidenfication_prob => {
+				"model" => 0.5,
+				"motion" => 0.5,
+				"tool" => 0.5,
+				"editing" => 0.5
+			},
+			:self_citation_prob =>  53647.0 / 414154,
+			:not_cite_prob => 350000.0 / 600000.0,
+			:num_items => 240000,
+			:num_users => 20000,
 		}.merge(options)
 
 		super(name, dir_name, options)
@@ -34,6 +53,8 @@ class ProcessMmdGraphTasks < FileProcessingTasks
 		cascade_graph_html_tasks
 
 		plot_tasks		
+
+		model_spec_tasks
 	end
 
 	no_index_file_tasks(:item_graph_raw, Proc.new { "#{dir_name}/item_graph_raw.json" }) do 
@@ -266,4 +287,27 @@ TEMPLATE
 			fout.close			
 		end
 	end
+
+	no_index_file_tasks(:model_spec, Proc.new { "#{dir_name}/model_spec.txt"}) do 
+		file model_spec_file_name do
+			File.open(model_spec_file_name, "w") do |f|
+				f.write("#{options[:num_items]}\n")
+				f.write("#{options[:num_users]}\n")
+				f.write("#{options[:user_item_exponent]}\n")
+				f.write("#{options[:max_user_item_count]}\n")
+				f.write("#{options[:self_citation_prob]}\n")
+				f.write("#{options[:not_cite_prob]}\n")
+				f.write("#{options[:category_prob]["cg"]}\n")
+				f.write("#{options[:category_prob]["model"]}\n")
+				f.write("#{options[:category_prob]["motion"]}\n")
+				f.write("#{options[:category_prob]["tool"]}\n")
+				f.write("#{options[:category_prob]["editing"]}\n")
+				f.write("#{options[:misidenfication_prob]["model"]}\n")
+				f.write("#{options[:misidenfication_prob]["motion"]}\n")
+				f.write("#{options[:misidenfication_prob]["tool"]}\n")
+				f.write("#{options[:misidenfication_prob]["editing"]}\n")
+			end
+		end
+	end
+
 end

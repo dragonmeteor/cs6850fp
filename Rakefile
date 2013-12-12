@@ -1,10 +1,11 @@
-require 'standalone_migrations'
-StandaloneMigrations::Tasks.load_tasks
+#require 'standalone_migrations'
+#StandaloneMigrations::Tasks.load_tasks
 require File.expand_path(File.dirname(__FILE__) + "/rake/process_mmd_graph_lib.rb")
 
 
 task :default => []
 
+=begin
 namespace :db do
 	task :seed do
 		require 'rubygems'
@@ -29,6 +30,7 @@ namespace :db do
 		Rake::Task["db:seed"].invoke
 	end
 end
+=end
 
 ProcessMmdGraphTasks.new("mmd01", "data/mmd_11_12_2013",
 	:db_config_file => "db/config_11_12_2013.yml")

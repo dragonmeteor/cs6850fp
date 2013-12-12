@@ -34,3 +34,4 @@ for i in xrange(1,count+1):
 	filename = ("%s%04d.png" % (file_name_prefix, i))
 	print "Saving", filename, "..."
 	plt.savefig(filename)
+	plt.close()
